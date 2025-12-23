@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Giáng Sinh An Lành</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Ephesis&family=Roboto:wght@500&display=swap');
@@ -17,6 +17,7 @@
             height: 100vh;
             width: 100vw;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             position: relative;
@@ -25,33 +26,31 @@
 
         /* --- 2. CẤU HÌNH CÂY THÔNG SVG --- */
         svg {
-            width: 85vh; /* Tự động chỉnh theo chiều cao màn hình */
-            height: 85vh;
+            width: 90vw; /* Chiếm 90% chiều ngang mobile */
+            max-width: 500px; /* Không quá to trên PC */
+            height: auto;
             z-index: 1;
-            filter: drop-shadow(0 0 10px rgba(255,255,255,0.1));
+            filter: drop-shadow(0 0 15px rgba(255,255,255,0.2));
+            margin-top: -50px;
         }
 
-        /* --- 3. HIỆU ỨNG VẼ NÉT (Thay thế GSAP DrawSVG) --- */
-        /* Ban đầu nét vẽ bị ẩn */
+        /* --- 3. HIỆU ỨNG VẼ NÉT --- */
         .draw-path {
             fill: none;
             stroke-linecap: round;
             stroke-linejoin: round;
-            stroke: #fff; /* Màu nét vẽ ban đầu */
+            stroke: #fff;
             stroke-width: 2;
-            /* JS sẽ tính toán stroke-dasharray */
         }
 
-        /* Class này được JS thêm vào để bắt đầu vẽ */
         .drawing {
             animation: drawAction 4s ease-in-out forwards;
         }
 
-        /* Cây vẽ xong sẽ hiện màu nền */
         .filled {
             transition: fill 2s ease;
-            fill: #cb9866 !important; /* Màu cây */
-            stroke: none; /* Xóa viền sau khi tô màu */
+            fill: #cb9866 !important;
+            stroke: none;
         }
         
         @keyframes drawAction {
@@ -84,6 +83,7 @@
             pointer-events: none;
             animation: fall linear infinite;
             z-index: 10;
+            will-change: transform;
         }
         @keyframes fall {
             to { transform: translateY(110vh); }
@@ -92,56 +92,68 @@
         /* --- 6. CHỮ & STICKER --- */
         .text-container {
             position: absolute;
-            top: 10%;
+            top: 8%;
             width: 100%;
             text-align: center;
             z-index: 5;
-            pointer-events: none;
         }
 
         .typewriter {
-            font-size: 80px;
-            color: #fff;
-            text-shadow: 0 0 10px #fff;
-            display: inline-block;
-            overflow: hidden;
-            white-space: nowrap;
-            border-right: 2px solid #fff;
-            width: 0;
-            animation: typing 3s steps(30, end) 1s forwards, blink 0.75s step-end infinite;
-        }
-
+    /* clamp(giá trị nhỏ nhất, giá trị linh hoạt, giá trị lớn nhất) */
+    font-size: clamp(30px, 12vw, 75px); 
+    color: #fff;
+    text-shadow: 0 0 10px #fff;
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 2px solid #fff;
+    width: 0;
+    animation: typing 3s steps(20, end) 1s forwards, blink 0.75s step-end infinite;
+}
         .wish {
             position: absolute;
-            bottom: 5%;
-            width: 100%;
+            bottom: 8%;
+            width: 85%; /* Thu hẹp để không chạm biên mobile */
             text-align: center;
             color: #fff;
-            font-size: 30px;
+            font-size: 24px;
+            line-height: 1.4;
             opacity: 0;
             animation: fadeIn 2s forwards 5s;
             z-index: 5;
-            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+            text-shadow: 0 0 10px rgba(0,0,0,0.7);
         }
 
         .santa-claus {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 180px;
+            bottom: 10px;
+            right: 10px;
+            width: 100px; /* Nhỏ lại trên mobile */
             z-index: 5;
             opacity: 0;
             animation: santaSlide 2s forwards 6s;
         }
 
+        /* --- RESPONSIVE CHO PC --- */
+        @media (min-width: 768px) {
+            .typewriter { font-size: 70px; }
+            .wish { font-size: 32px; width: 100%; }
+            .santa-claus { width: 160px; }
+            svg { width: 70vh; }
+        }
+
         @keyframes typing { to { width: 100%; } }
         @keyframes blink { 50% { border-color: transparent; } }
         @keyframes fadeIn { to { opacity: 1; } }
-        @keyframes santaSlide { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes santaSlide { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
 
     </style>
 </head>
 <body>
+
+    <div class="text-container">
+        <div class="typewriter">Merry Christmas</div>
+    </div>
 
     <svg class="mainSVG" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
         <defs>
@@ -174,69 +186,50 @@
                 <animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite" />
                 <animateMotion path="M252.9,447.9c0,0-30.8-21.6,33.9-44.7c64.7-23.1,46.2-37,33.9-41.6 s114-52.4,81.7-66.2s58.5-10.8-35.4-29.3s66.2-101.7,70.9-115.6" dur="4s" rotate="auto" fill="freeze" />
             </circle>
-
         </g>
     </svg>
 
-    <div class="text-container">
-        <div class="typewriter">Merry Christmas</div>
-    </div>
-    <div style="font-size: 40px;" class="wish">
-       Giáng sinh này chúc bạn nhỏ thật hạnh phúc luôn xinh vãi ò!
+    <div class="wish">
+        Giáng sinh này chúc bạn nhỏ thật hạnh phúc luôn xinh vãi ò!
     </div>
 
     <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ3Q4bWRmbjVqYTFueXpyNW1nc3k1eXQ2czdkejUyd2d1MDJrZ3lzcCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/24FRXoGHuV94vr6275/giphy.gif" class="santa-claus" alt="Santa Claus">
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            // --- 1. HIỆU ỨNG VẼ CÂY (CSS + JS) ---
             const masks = ["mask-path-1", "mask-path-2", "mask-path-3"];
-            const tree = document.querySelector("#treeMask").parentNode.nextElementSibling; // Lấy thẻ g chứa cây
-
+            
             masks.forEach(id => {
                 const path = document.getElementById(id);
                 if(path) {
                     const length = path.getTotalLength();
-                    // Thiết lập nét đứt dài bằng cả đường vẽ
                     path.style.strokeDasharray = length;
                     path.style.strokeDashoffset = length;
-                    // Kích hoạt animation
                     path.classList.add("drawing");
                 }
             });
 
-            // Sau khi vẽ xong, hiện màu cây
             setTimeout(() => {
                 const paths = document.querySelectorAll(".draw-path");
                 paths.forEach(p => p.classList.add("filled"));
             }, 4000);
 
-            // --- 2. HIỆU ỨNG TUYẾT RƠI (Basic JS) ---
             const snowflakeSymbols = ['❄', '✻', '✼', '❅', '❆'];
             
             function createSnowflake() {
                 const snowflake = document.createElement('div');
                 snowflake.classList.add('snowflake');
                 snowflake.textContent = snowflakeSymbols[Math.floor(Math.random() * snowflakeSymbols.length)];
-                
-                // Random vị trí và kích thước
                 snowflake.style.left = Math.random() * 100 + 'vw';
-                const size = Math.random() * 20 + 10;
+                const size = Math.random() * 15 + 10;
                 snowflake.style.fontSize = `${size}px`;
-                
-                // Random thời gian rơi
                 const duration = Math.random() * 5 + 5;
                 snowflake.style.animationDuration = `${duration}s`;
-                
                 document.body.appendChild(snowflake);
-                
-                // Xóa tuyết khi rơi xong
-                setTimeout(() => {
-                    snowflake.remove();
-                }, duration * 1000);
+                setTimeout(() => { snowflake.remove(); }, duration * 1000);
             }
 
-            setInterval(createSnowflake, 100);
+            setInterval(createSnowflake, 150);
         });
     </script>
 </body>
